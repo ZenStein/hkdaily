@@ -26,9 +26,10 @@ class App extends Component {
           data.append('files', this.state.files[0])
           data.append('files', this.state.files[1])
           data.append('files', this.state.files[2])
-        axios.post('http://localhost:3001/housekeeping', data)
+      //axios.post('http://localhost:3001/housekeeping', data)
+      axios.post('http://localhost:3001/housekeeping', data)
       .then((response) =>{
-        console.log(response)        
+        console.log('response', response)        
         const data = response.data
         const arrivals = data.filter((d)=>{
           return d.status === 'Arr' && d.turnover === false
