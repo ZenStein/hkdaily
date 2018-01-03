@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import Dropzone from 'react-dropzone'
 import axios from 'axios'
 import './App.css';
@@ -16,7 +16,7 @@ class App extends Component {
       arrivalsNumbers: [],
       arrivalsEmails:[],
       departuresNumbers: [],
-      departuresEmails:[],      
+      departuresEmails:[],
     }
 
   }
@@ -29,76 +29,86 @@ class App extends Component {
       //axios.post('http://localhost:3001/housekeeping', data)
       axios.post('http://localhost:3001/housekeeping', data)
       .then((response) =>{
-        console.log('response', response)        
-        const data = response.data
-        const arrivals = data.filter((d)=>{
-          return d.status === 'Arr' && d.turnover === false
-        }).map((d2) =>{
-          return {cabin:d2.cabin, status:d2.status, linens: d2.linensNumber}
-        })
-        const strictDeparts = data.filter((d)=>{
-          return d.status === 'Dep' && d.turnover === false
-        }).map((d2) =>{
-          return {cabin:d2.cabin, status:d2.status, linens: d2.linensNumber}
-        })
-        const tos = data.filter((d)=>{
-          return d.status === 'Arr' && d.turnover === true
-        }).map((d2) =>{
-          return {cabin:d2.cabin, status:'T.O.', linens: d2.linensNumber}
-        })
-        const arrivalsNumbers = data.filter((d)=>{
-          return d.status === 'Arr'
-        }).map((d2) =>{
-          return {number: d2.number}
-        })
-        const arrivalsEmails= data.filter((d)=>{
-          return d.status === 'Arr'
-        }).map((d2) =>{
-          return {email: d2.email}
-        })
-        const departuresNumbers= data.filter((d)=>{
-          return d.status === 'Dep'
-        }).map((d2) =>{
-          return {number: d2.number}
-        })
-        const departuresEmails= data.filter((d)=>{
-          return d.status === 'Dep'
-        }).map((d2) =>{
-          return {email: d2.email}
-        })
-       // console.log(arrivals, strictDeparts, tos)
-        this.setState({
-          allData: data,
-          assignments: [...arrivals, ...strictDeparts, ...tos],
-          arrivalsNumbers,
-          arrivalsEmails,
-          departuresNumbers,
-          departuresEmails,         
-        }, ()=>{
-          console.log(this.state)
-        })
-      })
+        console.log('response data', response.data)
+
+        if (response.data.tokenExists === false) {
+          console.log('going to auth url')
+          window.location = response.data.authUrl
+        }
+        else {
+          //Later: if we have a token, we will hit /gsheets-inject route
+          console.log('we had a token!!')
+        }
+      //   const data = response.data
+      //   const arrivals = data.filter((d)=>{
+      //     return d.status === 'Arr' && d.turnover === false
+      //   }).map((d2) =>{
+      //     return {cabin:d2.cabin, status:d2.status, linens: d2.linensNumber}
+      //   })
+      //   const strictDeparts = data.filter((d)=>{
+      //     return d.status === 'Dep' && d.turnover === false
+      //   }).map((d2) =>{
+      //     return {cabin:d2.cabin, status:d2.status, linens: d2.linensNumber}
+      //   })
+      //   const tos = data.filter((d)=>{
+      //     return d.status === 'Arr' && d.turnover === true
+      //   }).map((d2) =>{
+      //     return {cabin:d2.cabin, status:'T.O.', linens: d2.linensNumber}
+      //   })
+      //   const arrivalsNumbers = data.filter((d)=>{
+      //     return d.status === 'Arr'
+      //   }).map((d2) =>{
+      //     return {number: d2.number}
+      //   })
+      //   const arrivalsEmails= data.filter((d)=>{
+      //     return d.status === 'Arr'
+      //   }).map((d2) =>{
+      //     return {email: d2.email}
+      //   })
+      //   const departuresNumbers= data.filter((d)=>{
+      //     return d.status === 'Dep'
+      //   }).map((d2) =>{
+      //     return {number: d2.number}
+      //   })
+      //   const departuresEmails= data.filter((d)=>{
+      //     return d.status === 'Dep'
+      //   }).map((d2) =>{
+      //     return {email: d2.email}
+      //   })
+      //  // console.log(arrivals, strictDeparts, tos)
+      //   this.setState({
+      //     allData: data,
+      //     assignments: [...arrivals, ...strictDeparts, ...tos],
+      //     arrivalsNumbers,
+      //     arrivalsEmails,
+      //     departuresNumbers,
+      //     departuresEmails,
+      //   }, ()=>{
+      //     console.log(this.state)
+      //   })
+       })
       .catch(function (error) {
         console.log(error);
       });
     })
   }
-  
+
   render() {
     return (
       <div>
       <div className="App">
         <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src="./logo.svg" className="App-logo" alt="logo" />
           <h2>New Housekeeping App</h2>
         </div>
       </div>
-      
+
       <div className="center">
         <Dropzone onDrop={this.onDrop} className="dropzone-box">
           <div className="dropzone-text">Dropzone</div>
         </Dropzone>
-      </div>
+        </div>
+      <pre className="white-text">{JSON.stringify(this.state, null, 4)}  </pre>
         {this.state.assignments.map((assignment, index)=>{
          return  <AssignmentCard assignment={assignment} key={index}/>
         })}
