@@ -20,6 +20,10 @@
     background: grey;
     color: white;
 }
+.white-text{
+  color: white;
+  background: black;
+}
 .dropzone-text{
     margin: auto;
     width:50%;
